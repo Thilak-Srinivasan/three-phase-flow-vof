@@ -357,6 +357,6 @@ Velocity components confirm expected flow patterns: upward plume in bubble wake,
 ---
 
 **Author:** Thilak S | Department of Mechanical Engineering, BITS Pilani \
-**Supervisor:** Dr. Shyam Sunder Yadav | `ss.yadav@pilani.bits-pilani.ac.in` \
+**Supervisor:** Dr. Shyam Sunder Yadav | Associate Professor | Department of Mechanical Engineering, BITS Pilani \
 **Period:** January–May 2025 \
 **Contact:** f20220771@pilani.bits-pilani.ac.in

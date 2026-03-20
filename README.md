@@ -105,22 +105,102 @@ three-phase-flow-vof/
 ├── src/
 │   └── three_phase_vof.c          # Basilisk C simulation code
 ├── outputs/
-│   ├── f1_surface.png             # Phase 1 interface evolution
-│   ├── f1_surface_edges.png
-│   ├── f1_points.png
-│   ├── f2_surface.png             # Phase 2 bubble dynamics
-│   ├── f2_surface_edges.png
-│   ├── f2_points.png
-│   ├── f3_surface.png             # Phase 3 bubble dynamics
-│   ├── f3_surface_edges.png
-│   ├── f3_points.png
-│   ├── pressure_surface.png       # Pressure distribution & vortex
-│   ├── ux_surface.png             # Velocity field u.x
-│   └── uy_surface.png             # Velocity field u.y
+│   ├── f1_surface.png             # Fig 1a — Phase 1 surface
+│   ├── f1_surface_edges.png       # Fig 1b — Phase 1 surface with edges
+│   ├── f1_points.png              # Fig 1c — Phase 1 points
+│   ├── f2_surface.png             # Fig 2a — Phase 2 surface
+│   ├── f2_surface_edges.png       # Fig 2b — Phase 2 surface with edges
+│   ├── f2_points.png              # Fig 2c — Phase 2 points
+│   ├── f3_surface.png             # Fig 3a — Phase 3 surface
+│   ├── f3_surface_edges.png       # Fig 3b — Phase 3 surface with edges
+│   ├── f3_points.png              # Fig 3c — Phase 3 points
+│   ├── pressure_surface.png       # Fig 4  — Pressure & vortex generation
+│   ├── ux_surface.png             # Fig 5a — Velocity field u.x
+│   └── uy_surface.png             # Fig 5b — Velocity field u.y
 ├── paper/
 │   └── Numerical_Simulation_of_Three-Phase_Flow.pdf
 └── README.md
 ```
+
+---
+
+## Results
+
+### Figure 1 — Interface Evolution Over Time (f1)
+
+Phase 1 volume fraction tracked over time, showing bubble nucleation and interface deformation consistent with theoretical buoyancy-driven flow predictions.
+
+<p align="center">
+  <img src="outputs/f1_surface.png" width="280" alt="f1 surface"/>
+  &nbsp;&nbsp;
+  <img src="outputs/f1_surface_edges.png" width="280" alt="f1 surface with edges"/>
+  &nbsp;&nbsp;
+  <img src="outputs/f1_points.png" width="280" alt="f1 points"/>
+</p>
+<p align="center">
+  <em>(a) f1 – surface &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (b) f1 – surface with edges &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (c) f1 – points</em>
+</p>
+
+---
+
+### Figure 2 — Deformation and Trajectory of Bubble (f2)
+
+Phase 2 bubble dynamics showing deformation and trajectory as the bubble ascends through stratified liquid layers. Buoyancy confirmed as the dominant driving force.
+
+<p align="center">
+  <img src="outputs/f2_surface.png" width="280" alt="f2 surface"/>
+  &nbsp;&nbsp;
+  <img src="outputs/f2_surface_edges.png" width="280" alt="f2 surface with edges"/>
+  &nbsp;&nbsp;
+  <img src="outputs/f2_points.png" width="280" alt="f2 points"/>
+</p>
+<p align="center">
+  <em>(a) f2 – surface &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (b) f2 – surface with edges &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (c) f2 – points</em>
+</p>
+
+---
+
+### Figure 3 — Deformation and Trajectory of Bubble (f3)
+
+Phase 3 dynamics illustrating interaction between the third phase and surrounding liquid layers, demonstrating the framework's ability to handle complex triple-phase contact lines.
+
+<p align="center">
+  <img src="outputs/f3_surface.png" width="280" alt="f3 surface"/>
+  &nbsp;&nbsp;
+  <img src="outputs/f3_surface_edges.png" width="280" alt="f3 surface with edges"/>
+  &nbsp;&nbsp;
+  <img src="outputs/f3_points.png" width="280" alt="f3 points"/>
+</p>
+<p align="center">
+  <em>(a) f3 – surface &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (b) f3 – surface with edges &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (c) f3 – points</em>
+</p>
+
+---
+
+### Figure 4 — Pressure Distribution & Vortex Generation
+
+Pressure distribution (p) around rising bubbles. The pressure gradient drives vortex formation, showing direct influence of surface tension on flow patterns and mass transfer rates between phases.
+
+<p align="center">
+  <img src="outputs/pressure_surface.png" width="400" alt="Pressure distribution and vortex generation"/>
+  <br>
+  <em>Fig. 4: Pressure distribution & vortex generation around the bubbles (p-surface)</em>
+</p>
+
+---
+
+### Figure 5 — Velocity Field Analysis (u.x and u.y)
+
+Velocity components confirm expected flow patterns: upward plume in bubble wake, recirculation zones at phase interfaces, and surface-tension-driven lateral flows.
+
+<p align="center">
+  <img src="outputs/ux_surface.png" width="380" alt="u.x velocity surface"/>
+  &nbsp;&nbsp;
+  <img src="outputs/uy_surface.png" width="380" alt="u.y velocity surface"/>
+</p>
+<p align="center">
+  <em>(a) u.x – surface &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (b) u.y – surface</em>
+</p>
 
 ---
 
@@ -161,28 +241,10 @@ qcc -O2 -Wall three_phase_vof.c -o three_phase_vof -lm
 ```
 
 ### Post-Processing (ParaView)
-Load the `.vtu` output files in ParaView. Use the following representations:
+Load the `.vtu` output files in ParaView. Use:
 - **Surface** — smooth interface visualisation
 - **Surface with Edges** — displays mesh refinement structure
 - **Points** — discrete phase data
-
-Visualise: `f1`, `f2`, `f3` (volume fractions), `p` (pressure), `u.x`, `u.y` (velocity).
-
----
-
-## Results Summary
-
-### Interface Evolution (f1)
-Phase 1 volume fraction tracked over time showing bubble nucleation and interface deformation consistent with theoretical buoyancy-driven flow predictions.
-
-### Bubble Dynamics (f2, f3)
-Deformation and trajectory of bubbles ascending through stratified liquid layers. Buoyancy confirmed as the dominant force in bubble rise behavior.
-
-### Surface Tension & Vortex Generation
-Pressure distribution (p) reveals vortex formation around rising bubbles. Surface tension quantified via vortex intensity, showing direct influence on mass transfer rates between phases.
-
-### Velocity Field (u.x, u.y)
-Velocity components confirm expected flow patterns: upward plume in bubble wake, recirculation zones at phase interfaces.
 
 ---
 
@@ -203,8 +265,14 @@ Velocity components confirm expected flow patterns: upward plume in bubble wake,
 3. Bagheri et al., *The Canadian Journal of Chemical Engineering*, 2022.
 4. Shen & Li, *RSC Advances*, 2023.
 5. Kim & Lowengrub, *Interfaces and Free Boundaries*, 2005.
-
-Full reference list available in `paper/Numerical_Simulation_of_Three-Phase_Flow.pdf`.
+6. Yuan et al., *Physics of Fluids*, 2022.
+7. Mirjalili & Mani, *Journal of Computational Physics*, 2024.
+8. Zeng et al., *Fluids*, 2021.
+9. Xie et al., *International Journal for Numerical Methods in Fluids*, 2020.
+10. Wang et al., *Journal of Computational Physics*, 2024.
+11. Yap et al., *International Journal of Heat and Mass Transfer*, 2017.
+12. Aihara et al., *Theoretical and Computational Fluid Dynamics*, 2023.
+13. Zhan et al., *Physica D: Nonlinear Phenomena*, 2024.
 
 ---
 

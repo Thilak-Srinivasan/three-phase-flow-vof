@@ -276,7 +276,7 @@ Load the `.vtu` output files in ParaView. Use:
 
 ---
 
-**Author:** Thilak S | Department of Mechanical Engineering, BITS Pilani
-**Supervisor:** Dr. Shyam Sunder Yadav
+**Author:** Thilak S | Department of Mechanical Engineering, BITS Pilani \
+**Supervisor:** Dr. Shyam Sunder Yadav \
 **Period:** January–May 2025
 **Contact:** f20220771@pilani.bits-pilani.ac.in

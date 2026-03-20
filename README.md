@@ -44,7 +44,11 @@ This work addresses these challenges by combining VOF with AMR in Basilisk C, en
 
 ## Simulation Parameters
 
-### Surface Tension Coefficients
+<table>
+<tr>
+<td>
+
+**Surface Tension Coefficients**
 
 | Parameter | Value (N/m) |
 |-----------|-------------|
@@ -52,13 +56,20 @@ This work addresses these challenges by combining VOF with AMR in Basilisk C, en
 | σ₂ (Phase 2 – Phase 3) | 0.045 |
 | σ₃ (Phase 1 – Phase 3) | 0.030 |
 
-### Dynamic Viscosity Values
+</td>
+<td>
+
+**Dynamic Viscosity Values**
 
 | Parameter | Value (Pa·s) |
 |-----------|--------------|
 | μ₁ (Phase 1) | 0.001 |
 | μ₂ (Phase 2) | 0.002 |
 | μ₃ (Phase 3) | 0.003 |
+
+</td>
+</tr>
+</table>
 
 ### Mesh & Solver Configuration
 

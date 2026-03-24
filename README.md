@@ -195,8 +195,6 @@ three-phase-flow-vof/
 │   ├── pressure_surface.png   # Fig 4  — Pressure & vortex generation
 │   ├── ux_surface.png         # Fig 5a — Velocity field u.x
 │   └── uy_surface.png         # Fig 5b — Velocity field u.y
-├── paper/
-│   └── Numerical_Simulation_of_Three-Phase_Flow.pdf
 └── README.md
 ```
 

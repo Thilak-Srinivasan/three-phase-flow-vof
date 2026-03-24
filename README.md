@@ -1,9 +1,8 @@
 # Numerical Simulation of Three-Phase Flow
 
-> **Research Paper | BITS Pilani | Jan–May 2025**
-> Thilak S · Under Prof. Shyam Sunder Yadav
-> Department of Mechanical Engineering, BITS Pilani
-> `f20220771@pilani.bits-pilani.ac.in`
+> **Research Paper | BITS Pilani | Jan–May 2025** \
+> Thilak S · Under Prof. Shyam Sunder Yadav \
+> Department of Mechanical Engineering, BITS Pilani 
 
 A numerical framework for dynamic modeling of three-phase bubble rise using the **Volume-of-Fluid (VOF)** method implemented in **Basilisk C**, with **Adaptive Mesh Refinement (AMR)** for high-resolution interface tracking at reduced computational cost.
 
@@ -428,7 +427,7 @@ Velocity components confirm expected flow patterns: upward plume in bubble wake,
 
 ---
 
-**Author:** Thilak S | Department of Mechanical Engineering, BITS Pilani
-**Supervisor:** Dr. Shyam Sunder Yadav | Associate Professor | Department of Mechanical Engineering, BITS Pilani
-**Period:** January–May 2025
+**Author:** Thilak S | Department of Mechanical Engineering, BITS Pilani \
+**Supervisor:** Dr. Shyam Sunder Yadav | Associate Professor | Department of Mechanical Engineering, BITS Pilani \
+**Period:** January–May 2025 \
 **Contact:** f20220771@pilani.bits-pilani.ac.in

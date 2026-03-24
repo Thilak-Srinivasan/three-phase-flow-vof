@@ -1,8 +1,8 @@
 # Numerical Simulation of Three-Phase Flow
 
-> **Research Paper | BITS Pilani | Jan–May 2025** \
-> Thilak S · Under Prof. Shyam Sunder Yadav \
-> Department of Mechanical Engineering, BITS Pilani \
+> **Research Paper | BITS Pilani | Jan–May 2025**
+> Thilak S · Under Prof. Shyam Sunder Yadav
+> Department of Mechanical Engineering, BITS Pilani
 > `f20220771@pilani.bits-pilani.ac.in`
 
 A numerical framework for dynamic modeling of three-phase bubble rise using the **Volume-of-Fluid (VOF)** method implemented in **Basilisk C**, with **Adaptive Mesh Refinement (AMR)** for high-resolution interface tracking at reduced computational cost.
@@ -48,24 +48,49 @@ This work addresses these challenges by combining VOF with AMR in Basilisk C, en
 <tr>
 <td>
 
-**Surface Tension Coefficients**
+**Surface Tension Coefficients (Case 1 — Non-spreading)**
 
 | Parameter | Value (N/m) |
 |-----------|-------------|
-| σ₁ (Phase 1 – Phase 2) | 0.072 |
-| σ₂ (Phase 2 – Phase 3) | 0.045 |
-| σ₃ (Phase 1 – Phase 3) | 0.030 |
+| σ₁ (Phase 1 – Phase 2) | 0.02 |
+| σ₂ (Phase 2 – Phase 3) | 0.04 |
+| σ₃ (Phase 1 – Phase 3) | 0.03 |
+
+**Surface Tension Coefficients (Case 2 — Spreading)**
+
+| Parameter | Value (N/m) |
+|-----------|-------------|
+| σ₁ (Phase 1 – Phase 2) | 0.04 |
+| σ₂ (Phase 2 – Phase 3) | 0.04 |
+| σ₃ (Phase 1 – Phase 3) | −0.01 |
 
 </td>
 <td>
 
-**Dynamic Viscosity Values**
+**Fluid Properties**
 
-| Parameter | Value (Pa·s) |
-|-----------|--------------|
-| μ₁ (Phase 1) | 0.001 |
-| μ₂ (Phase 2) | 0.002 |
-| μ₃ (Phase 3) | 0.003 |
+| Parameter | Phase 1 (Gas) | Phase 2 (Liquid) | Phase 3 (Liquid) |
+|-----------|--------------|-----------------|-----------------|
+| ρ (kg/m³) | 1.0 | 1000.0 | 1000.0 |
+| μ (Pa·s) | 0.01 | 1.0 | 1.0 |
+
+**AMR Settings**
+
+| Parameter | Value |
+|-----------|-------|
+| Maximum refinement level | 8 |
+| Minimum refinement level | 4 |
+| Refinement criterion | f1, f2, f3, u.x, u.y wavelet threshold 10⁻³ |
+
+**Initial Geometry**
+
+| Parameter | Value |
+|-----------|-------|
+| Bubble radius (r₀) | 0.10 |
+| Bubble centre (x₀) | 0.50 |
+| Phase 3 | Sphere of radius r₀ centred at x₀ |
+| Phase 2 | Left half-domain (x < x₀) |
+| Phase 1 | Remainder of domain |
 
 </td>
 </tr>
@@ -75,12 +100,15 @@ This work addresses these challenges by combining VOF with AMR in Basilisk C, en
 
 | Parameter | Value |
 |-----------|-------|
-| Base mesh resolution | 64 × 64 cells |
-| Maximum AMR refinement level | 10 |
-| Refinement criterion | \|∇F\| > C_threshold |
+| Geometry | Axisymmetric (Basilisk `axi.h`) |
+| Base mesh | 64 × 64 cells |
+| Max AMR level | 8 |
+| Min AMR level | 4 |
 | Boundary — axis | Symmetry (cylindrical geometry) |
 | Boundary — upper/lower | Outflow |
 | Boundary — bottom wall | No-slip |
+| VTK output interval | Every 100 iterations |
+| Dump output | Every 5.0 time units up to t = 35 |
 | Solver | Basilisk C (open-source CFD toolbox) |
 | Post-processing | ParaView |
 | OS | Ubuntu |
@@ -120,66 +148,25 @@ When accounting for heat during phase change:
 
 $$\frac{\partial T}{\partial t} + \mathbf{u} \cdot \nabla T = \frac{1}{\rho C_p} \nabla \cdot (\kappa \nabla T) + \frac{Q}{\rho C_p}$$
 
-where:
-- $\mathbf{u}$ — fluid velocity field
-- $C_p$ — specific heat capacity
-- $\kappa$ — thermal conductivity
-- $Q$ — latent heat release due to phase change
-
-### VOF — Volume Fraction
-
-The VOF method uses a scalar field $F \in [0,1]$ per phase:
-- $F = 0$ — cell contains no tracked fluid
-- $F = 1$ — cell fully occupied by tracked fluid
-- $0 < F < 1$ — interface cell
-
 ### VOF Advection
 
 $$\frac{\partial F}{\partial t} + \mathbf{u} \cdot \nabla F = 0$$
 
-This guarantees conservation of volume fraction while advecting with the flow.
-
 ### Interface Representation — Mixture Properties
-
-Properties such as density and viscosity are averaged over volume fractions in each cell:
 
 $$\rho = \sum_{m=1}^{n} \alpha_m \rho_m$$
 
 ### Surface Tension (Continuum Surface Force)
 
-$$\mathbf{F}_{st} = \sigma \kappa \mathbf{n} \delta_s$$
-
-where the interface curvature $\kappa$ is computed as:
-
-$$\kappa = \nabla \cdot \left( \frac{\nabla F}{|\nabla F|} \right)$$
-
-### Continuity Equation
-
-For incompressible flows ($\rho$ = constant):
-
-$$\nabla \cdot \mathbf{u} = 0$$
-
-ensuring the velocity field is divergence-free.
+$$\mathbf{F}_{st} = \sigma \kappa \mathbf{n} \delta_s, \qquad \kappa = \nabla \cdot \left( \frac{\nabla F}{|\nabla F|} \right)$$
 
 ### Momentum Equation (Navier-Stokes)
 
 $$\frac{\partial \rho \mathbf{u}}{\partial t} + \nabla \cdot (\rho \mathbf{u}\mathbf{u}) = -\nabla p + \nabla \cdot (\mu \nabla \mathbf{u}) + \mathbf{F}_{st} + \mathbf{F}_g$$
 
-where:
-- $\frac{\partial \rho \mathbf{u}}{\partial t}$ — transient momentum change
-- $\nabla \cdot (\rho \mathbf{u}\mathbf{u})$ — convective momentum transport
-- $-\nabla p$ — pressure gradient force
-- $\nabla \cdot (\mu \nabla \mathbf{u})$ — viscous diffusion
-- $\mathbf{F}_{st}$ — surface tension force
-- $\mathbf{F}_g$ — gravitational body force
-
 ### AMR Refinement Criterion
 
-Cells are refined where the volume fraction gradient exceeds a threshold:
-
 $$\text{Refine if} \quad |\nabla F| > C_{\text{threshold}}$$
-
-Regions away from interfaces remain coarse, optimising resource utilisation.
 
 ---
 
@@ -188,20 +175,27 @@ Regions away from interfaces remain coarse, optimising resource utilisation.
 ```
 three-phase-flow-vof/
 ├── src/
-│   └── three_phase_vof.c          # Basilisk C simulation code
+│   ├── testcase-3p.c          # Main simulation — initial conditions, events, output
+│   ├── three-phase.h          # Three-phase flow setup (density, viscosity, VOF fields)
+│   ├── vof-3p.h               # Modified VOF advection for three-phase flows
+│   ├── fractions.h            # Modified interface reconstruction (PLIC for triple contact lines)
+│   ├── conserving-3p.h        # Momentum-conserving VOF advection (optional)
+│   ├── vtknew_cell.h          # VTK cell-centred AMR output (ParaView compatible)
+│   ├── compile.sh             # Build script
+│   └── clean.sh               # Cleanup script
 ├── outputs/
-│   ├── f1_surface.png             # Fig 1a — Phase 1 surface
-│   ├── f1_surface_edges.png       # Fig 1b — Phase 1 surface with edges
-│   ├── f1_points.png              # Fig 1c — Phase 1 points
-│   ├── f2_surface.png             # Fig 2a — Phase 2 surface
-│   ├── f2_surface_edges.png       # Fig 2b — Phase 2 surface with edges
-│   ├── f2_points.png              # Fig 2c — Phase 2 points
-│   ├── f3_surface.png             # Fig 3a — Phase 3 surface
-│   ├── f3_surface_edges.png       # Fig 3b — Phase 3 surface with edges
-│   ├── f3_points.png              # Fig 3c — Phase 3 points
-│   ├── pressure_surface.png       # Fig 4  — Pressure & vortex generation
-│   ├── ux_surface.png             # Fig 5a — Velocity field u.x
-│   └── uy_surface.png             # Fig 5b — Velocity field u.y
+│   ├── f1_surface.png         # Fig 1a — Phase 1 surface
+│   ├── f1_surface_edges.png   # Fig 1b — Phase 1 surface with edges
+│   ├── f1_points.png          # Fig 1c — Phase 1 points
+│   ├── f2_surface.png         # Fig 2a — Phase 2 surface
+│   ├── f2_surface_edges.png   # Fig 2b — Phase 2 surface with edges
+│   ├── f2_points.png          # Fig 2c — Phase 2 points
+│   ├── f3_surface.png         # Fig 3a — Phase 3 surface
+│   ├── f3_surface_edges.png   # Fig 3b — Phase 3 surface with edges
+│   ├── f3_points.png          # Fig 3c — Phase 3 points
+│   ├── pressure_surface.png   # Fig 4  — Pressure & vortex generation
+│   ├── ux_surface.png         # Fig 5a — Velocity field u.x
+│   └── uy_surface.png         # Fig 5b — Velocity field u.y
 ├── paper/
 │   └── Numerical_Simulation_of_Three-Phase_Flow.pdf
 └── README.md
@@ -211,19 +205,58 @@ three-phase-flow-vof/
 
 ## Code Structure (Basilisk C)
 
-The simulation framework is structured into four modules:
+The simulation is split across seven source files:
 
-**1. Domain Setup**
-Initialises the simulation domain, boundary conditions, and time-stepping loop. Brings together all fluid dynamics modules.
+### `testcase-3p.c` — Main Simulation Driver
+Sets fluid properties, runs the simulation loop, handles adaptive refinement, and manages all output events:
 
-**2. Material Properties**
-Defines densities, viscosities, and surface tension coefficients for 3 immiscible fluids. Volume fraction variables (f1, f2, f3) track each phase throughout the simulation.
+```c
+// Two embedded test cases (non-spreading / spreading)
+#define SIGMA_1 0.02   // Phase 1–2 surface tension
+#define SIGMA_2 0.04   // Phase 2–3 surface tension
+#define SIGMA_3 0.03   // Phase 1–3 surface tension
 
-**3. Momentum Conservation**
-A three-phase momentum-conserving VOF advection scheme prevents artificial mass transfer during interface transport via interphase momentum conservation.
+rho1 = 1.0;    rho2 = 1000.0;  rho3 = 1000.0;
+mu1  = 1.0e-2; mu2  = 1.0e-0;  mu3  = 1.0e-0;
 
-**4. Interface Reconstruction**
-Calculates volume fractions at phase contact regions and applies geometric PLIC (Piecewise Linear Interface Calculation) reconstruction to identify and track phase boundaries.
+// AMR driven by volume fractions and velocity
+adapt_wavelet ({f1, f2, f3, u.x, u.y},
+               (double[]){1e-3, 1e-3, 1e-3, 1e-3, 1e-3},
+               maxlevel = 8, minlevel = 4);
+```
+
+### `three-phase.h` — Three-Phase Flow Setup
+Declares the three VOF scalar fields `f1`, `f2`, `f3` and defines the mixture density/viscosity using arithmetic averaging:
+
+```c
+scalar f1[], f2[], f3[], *interfaces = {f1, f2, f3};
+
+#define rho(f1,f2,f3) (clamp(f1,0.,1.)*rho1 + clamp(f2,0.,1.)*rho2 + clamp(f3,0.,1.)*rho3)
+#define mu(f1,f2,f3)  (clamp(f1,0.,1.)*mu1  + clamp(f2,0.,1.)*mu2  + clamp(f3,0.,1.)*mu3)
+```
+
+Applies a cutoff `R_VOFLIMIT = 1e-3` to eliminate cells with negligible phase fractions, reducing numerical noise near triple contact lines.
+
+### `vof-3p.h` — Modified VOF Advection
+Based on the standard Basilisk `vof.h` but uses the modified `fractions.h` for interface reconstruction in two-phase cells of a three-phase system.
+
+### `fractions.h` — Modified Interface Reconstruction
+The key algorithmic contribution. Handles the special case of **two-phase cells** in a three-phase flow where two interfaces coexist. For such cells, instead of computing two independent normals, it volume-averages the interface normals to produce a single consistent interface — avoiding non-physical double-interface artefacts near the triple contact line:
+
+```c
+// Detect two-phase cells and average normals volumetrically
+if (f1[] == 0. && f2[] > 0. && f2[] < 1. && f3[] > 0. && f3[] < 1.) {
+    m1 = mycs(point, f2);  // normal for Phase 2 interface
+    m2 = mycs(point, f3);  // normal for Phase 3 interface
+    // Volume-weighted average → single consistent interface normal
+}
+```
+
+### `conserving-3p.h` — Momentum-Conserving Advection (Optional)
+Implements momentum-conserving VOF advection by transporting phase momenta $q_i = f_i \rho_i \mathbf{u}$ alongside the volume fractions. Commented out in the default configuration but available for higher-fidelity runs.
+
+### `vtknew_cell.h` — VTK Cell-Centred Output
+Exports AMR grid data as VTK unstructured grids without interpolation to a uniform mesh, preserving the actual adaptive grid structure for visualisation in ParaView. Each cell is stored as a `VTK_PIXEL` (2D) or `VTK_VOXEL` (3D).
 
 ---
 
@@ -238,16 +271,42 @@ export BASILISK=$PWD
 export PATH=$PATH:$BASILISK
 ```
 
-### Compile and Run
+### Compile
 ```bash
 cd src/
-qcc -O2 -Wall three_phase_vof.c -o three_phase_vof -lm
-./three_phase_vof
+qcc -fopenmp -Wall -O2 testcase-3p.c -o a.out \
+    -L$BASILISK/gl -lglutils -lfb_glx -lGLU -lGLEW -lGL -lX11 -lm
 ```
+
+Or use the provided script:
+```bash
+chmod +x compile.sh
+./compile.sh
+```
+
+### Run
+```bash
+./a.out
+```
+
+Expected outputs:
+- `fields_N.vtk` — VTK files every 100 iterations (open in ParaView)
+- `dump-T` — Basilisk dump files every 5.0 time units up to t = 35
+- `movie.mp4` — Full-domain interface animation
+- `zoom.mp4` — Zoom on the triple contact point
+- `log` — Volume conservation errors and max velocity per timestep
+
+### Clean up output files
+```bash
+./clean.sh
+```
+
+### Switch to Spreading Case (Case 2)
+In `testcase-3p.c`, change the `#if 1` to `#if 0` at line 16 to use the spreading configuration (σ₃ = −0.01).
 
 ### Post-Processing (ParaView)
 
-Load `.vtu` output files in ParaView. Three representation modes used:
+Load `fields_*.vtk` in ParaView. Three representation modes used:
 
 | Mode | Purpose |
 |------|---------|
@@ -341,11 +400,13 @@ Velocity components confirm expected flow patterns: upward plume in bubble wake,
 
 ## Novel Contributions
 
-1. **Higher Interface Resolution** — AMR achieves finer resolution at phase boundaries than fixed-grid approaches, crucial for complex interfacial dynamics without prohibitive computational cost.
+1. **Modified Interface Reconstruction for Two-Phase Cells** — The key contribution in `fractions.h`: near triple contact lines, cells containing two interfaces are handled by volumetrically averaging the two interface normals into a single consistent normal. This prevents non-physical double-interface artefacts that arise in standard VOF implementations.
 
-2. **Robust Validation Against Theory** — Results closely match theoretical models for buoyancy-driven three-phase flows, lending confidence in the framework for real-world multiphase systems.
+2. **Higher Interface Resolution** — AMR achieves finer resolution at phase boundaries than fixed-grid approaches, crucial for complex interfacial dynamics without prohibitive computational cost.
 
-3. **Industrial Applicability** — Framework directly applicable to oil recovery, chemical processing, environmental engineering, and waste minimisation — any system dependent on robust phase interactions.
+3. **Robust Validation Against Theory** — Results closely match theoretical models for buoyancy-driven three-phase flows.
+
+4. **Industrial Applicability** — Framework directly applicable to oil recovery, chemical processing, environmental engineering, and waste minimisation.
 
 ---
 
@@ -367,7 +428,7 @@ Velocity components confirm expected flow patterns: upward plume in bubble wake,
 
 ---
 
-**Author:** Thilak S | Department of Mechanical Engineering, BITS Pilani \
-**Supervisor:** Dr. Shyam Sunder Yadav | Associate Professor | Department of Mechanical Engineering, BITS Pilani \
-**Period:** January–May 2025 \
+**Author:** Thilak S | Department of Mechanical Engineering, BITS Pilani
+**Supervisor:** Dr. Shyam Sunder Yadav | Associate Professor | Department of Mechanical Engineering, BITS Pilani
+**Period:** January–May 2025
 **Contact:** f20220771@pilani.bits-pilani.ac.in
